@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { statusFilters } from "./constants";
+import { statusFilters } from "./constans";
 
 const tasksInitialState = [
   { id: 0, text: "Learn HTML and CSS", completed: true },
@@ -14,37 +14,42 @@ const tasksReducer = (state = tasksInitialState, action) => {
   switch (action.type) {
     // В зависимости от типа экшена будет выполняться разная логика
     case "tasks/addTask":
-      // Нужно вернуть новый объект состояния
-      return {
-        // в котором есть все данные существующего состояния
+      // Нужно вернуть новый массив задач
+      return [
+        // в котором есть все существующие задачи
         ...state,
-        // и новый массив задач
-        tasks: [
-          // в котором есть все существующие задачи
-          ...state.tasks,
-          // и объект новой задачи
-          action.payload,
-        ],
-      };
+        // и объект новой задачи
+        action.payload,
+      ];
+    // };
 
     case "tasks/deleteTask":
-      return {
-        ...state,
-        tasks: state.tasks.filter((task) => task.id !== action.payload),
-      };
+      return state.filter((task) => task.id !== action.payload);
+
     case "tasks/toggleCompleted":
-      return {
-        ...state,
-        tasks: state.tasks.map((task) => {
-          if (task.id !== action.payload) {
-            return task;
-          }
-          return {
-            ...task,
-            completed: !task.completed,
-          };
-        }),
-      };
+      return state.map((task) => {
+        if (task.id !== action.payload) {
+          return task;
+        }
+        return {
+          ...task,
+          completed: !task.completed,
+        };
+      });
+
+    case "tasks/toggleAllCompleted":
+      return state.map((task) => {
+        if (task.completed) {
+          return task;
+        }
+        return {
+          ...task,
+          completed: true,
+        };
+      });
+
+    case "tasks/clearAllCompleted":
+      return state.filter((task) => !task.completed);
 
     default:
       // Каждый редюсер получает все экшены отправленные в стор.
